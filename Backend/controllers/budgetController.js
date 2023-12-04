@@ -5,7 +5,7 @@ async function createBudget(req, res) {
     const { amount, title } = req.body;
     const user = req.user; // Assume you've added the user to the request during authentication
     const newBudget = await budgetService.createBudget(user, amount, title);
-    res.status(201).json({ message: 'Budget created successfully', budget: newBudget });
+    res.status(201).json({ message: 'Budget created successfully', data: newBudget });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
@@ -17,7 +17,7 @@ async function updateBudget(req, res) {
     const updates = req.body;
     const user = req.user; // Assume you've added the user to the request during authentication
     const updatedBudget = await budgetService.updateBudget(user, budgetId, updates);
-    res.json({ message: 'Budget updated successfully', budget: updatedBudget });
+    res.json({ message: 'Budget updated successfully', data: updatedBudget });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
@@ -38,7 +38,18 @@ async function getBudgets(req, res) {
   try {
     const user = req.user; // Assume you've added the user to the request during authentication
     const budgets = await budgetService.getBudgets(user);
-    res.json({ budgets });
+    res.json({ message: 'Budgets retrieved successfully', data: budgets });
+  } catch (error) {
+    res.status(500).json({ error: 'Internal server error' });
+  }
+}
+async function getBudgetById(req, res) {
+  try {
+    const user = req.user; // Assume you've added the user to the request during authentication
+    const { budgetId } = req.params;
+    const budget = await budgetService.getBudgetById(budgetId, user);
+    console.log(budget);
+    res.json({ message: 'Budget retrieved successfully', data: budget });
   } catch (error) {
     res.status(500).json({ error: 'Internal server error' });
   }
@@ -49,4 +60,5 @@ module.exports = {
   updateBudget,
   deleteBudget,
   getBudgets,
+  getBudgetById
 };

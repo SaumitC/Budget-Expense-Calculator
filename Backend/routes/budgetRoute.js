@@ -13,7 +13,10 @@ router.put('/budgets/:budgetId', BudgetController.updateBudget);
 // Delete a budget
 router.delete('/budgets/:budgetId', BudgetController.deleteBudget);
 
-// Get all budgets for the authenticated user
-router.get('/budgets', BudgetController.getBudgets);
+router.get('/budgets/:budgetId', BudgetController.getBudgetById);
+
+router.get('/all-budgets', BudgetController.getBudgets);
+
+
 
 module.exports = router;

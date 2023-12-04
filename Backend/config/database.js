@@ -8,7 +8,7 @@ const mongooseOptions = {
   useNewUrlParser: true,
   useUnifiedTopology: true
 };
-
+mongoose.set('debug', true);
 // Connect to MongoDB
 mongoose.connect(process.env.MONGODB_URI, mongooseOptions);
 

@@ -52,7 +52,7 @@ async function deleteBudget(user, budgetId) {
       throw new Error('Unauthorized to delete this budget');
     }
 
-    await budget.remove();
+    await budget.deleteOne();
     return { message: 'Budget deleted successfully' };
   } catch (error) {
     throw new Error(error.message);
@@ -61,8 +61,24 @@ async function deleteBudget(user, budgetId) {
 
 async function getBudgets(user) {
   try {
-    const budgets = await BudgetModel.find({ createdBy: user._id });
+    const budgets = await BudgetModel.find({ createdBy: user._id }).populate( 'expenses', 'amount description name');
     return budgets;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+}
+async function getBudgetById(budgetId, user) {
+  try {
+    const budget = await BudgetModel.findOne({
+      _id: budgetId,
+      createdBy: user._id,
+    }).populate('expenses', 'amount description name');
+
+    if (!budget) {
+      throw new Error('Budget not found');
+    }
+
+    return budget;
   } catch (error) {
     throw new Error(error.message);
   }
@@ -73,4 +89,5 @@ module.exports = {
   updateBudget,
   deleteBudget,
   getBudgets,
+  getBudgetById
 };

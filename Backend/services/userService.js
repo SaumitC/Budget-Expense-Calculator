@@ -16,7 +16,7 @@ async function comparePasswords(plainPassword, hashedPassword) {
 }
 
 function generateToken(user) {
-    return jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '1m' }); // 1-minute expiration
+    return jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' }); // 1-minute expiration
 }
 async function logout(token) {
     try {
