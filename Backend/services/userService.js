@@ -7,8 +7,8 @@ async function createUser(user) {
   return userModel.save();
 }
 
-async function findUserByUsername(username) {
-  return User.findOne({ username });
+async function findUserByEmail(email) {
+  return User.findOne({ email });
 }
 
 async function comparePasswords(plainPassword, hashedPassword) {
@@ -16,7 +16,9 @@ async function comparePasswords(plainPassword, hashedPassword) {
 }
 
 function generateToken(user) {
-    return jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' }); // 1-minute expiration
+
+    return jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '60s' }); // 1-minute expiration
+
 }
 async function logout(token) {
     try {
@@ -26,9 +28,10 @@ async function logout(token) {
     }
   }
 
+
 module.exports = {
   createUser,
-  findUserByUsername,
+  findUserByEmail,
   comparePasswords,
   generateToken,
   logout

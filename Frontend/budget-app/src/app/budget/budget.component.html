@@ -1,0 +1,62 @@
+<app-navbar></app-navbar>
+<div class="container mt-5">
+  <h2>Budget</h2>
+
+  <!-- Add Budget Button -->
+  <button class="btn btn-success mb-3"  (click)="open(content,'Add')">
+    <i class="bi bi-plus"></i> Add Budget
+  </button>
+
+
+
+  <!-- Budget Table -->
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col-2">Category</th>
+        <th scope="col-4">Amount</th>
+        <th scope="col-1">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Sample Data -->
+      <tr *ngFor="let budget of budgetItems">
+        <td>{{ budget.title}}</td>
+        <td>${{ budget.amount }}</td>
+        <td>
+          <!-- Edit Button -->
+          <button class="btn btn-warning btn-sm button" (click)="open(content,'Edit',budget)">
+            <i class="bi bi-pencil"></i> Edit
+          </button>
+
+          <!-- Delete Button -->
+          <button class="btn btn-danger btn-sm ml-2 button" (click)="deleteBudgetItem(budget)">
+            <i class="bi bi-trash"></i> Delete
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+<ng-template #content let-modal>
+  <form (ngSubmit)="onSubmit()" >
+	<div class="modal-header">
+		<h4 class="modal-title" id="modal-basic-title">{{actionType}} Budget </h4>
+		<button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+	</div>
+	<div class="modal-body">
+
+      <div class="mb-3">
+        <label for="category">Category</label>
+        <input type="text" class="form-control" id="category" placeholder="Enter category" name="newCategory" [(ngModel)]="newBudget.title"  required/>
+      </div>
+      <div class="mb-3">
+        <label for="amount">Amount</label>
+        <input type="number" class="form-control" id="amount" placeholder="Enter amount" name="newAmount" [(ngModel)]="newBudget.amount" required/>
+      </div>
+	</div>
+	<div class="modal-footer">
+		<button type="submit" class="btn btn-outline-dark">Save</button>
+	</div>
+</form>
+</ng-template>

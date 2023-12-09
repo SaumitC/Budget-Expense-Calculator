@@ -17,6 +17,10 @@ router.get('/budgets/:budgetId', BudgetController.getBudgetById);
 
 router.get('/all-budgets', BudgetController.getBudgets);
 
+router.get('/budgets-pie-chart', BudgetController.getBudgetsPieChart);
+
+router.get('/budgets-bar-chart', BudgetController.getBudgetsBarChart);
+
 
 
 module.exports = router;

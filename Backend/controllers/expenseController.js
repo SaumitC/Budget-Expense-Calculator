@@ -3,13 +3,14 @@ const expenseService = require('../services/expenseService');
 // Create a new expense
 const createExpense = async (req, res) => {
     try {
-        const { amount, description, name, budgetId } = req.body;
+        const { amount, description, name, budgetId ,date} = req.body;
 
         const newExpense = await expenseService.createExpense({
             amount,
             description,
             name,
             budget: budgetId,
+            date: date,
         });
         res.status(201).json({ message: 'Expense created successfully', data: newExpense });
     } catch (error) {
@@ -69,7 +70,7 @@ const deleteExpenseById = async (req, res) => {
     try {
         await expenseService.deleteExpenseById(req.params.id);
 
-        res.status(200).json({ message: 'Expense deleted successfully' });
+        res.status(204).json({ message: 'Expense deleted successfully' });
     } catch (error) {
         console.error(error.message);
         res.status(404).json({ error: 'Failed to delete expense' });
@@ -80,7 +81,7 @@ const getMonthlyExpenses = async (req, res) => {
     try {
       const userId = req.userId; // Adjust this based on how you store user information in your application
       const monthlyExpenses = await expenseService.getMonthlyExpenses(userId);
-      res.status(200).json(monthlyExpenses);
+        res.status(200).json({ message: 'Monthly expenses retrieved successfully', data: monthlyExpenses });
     } catch (error) {
       console.error(error.message);
       res.status(500).json({ error: 'Failed to retrieve monthly expenses' });

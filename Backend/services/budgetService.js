@@ -84,10 +84,51 @@ async function getBudgetById(budgetId, user) {
   }
 }
 
+async function getBudgetsPieChart(user) {
+  try {
+    const budgets = await BudgetModel.find({ createdBy: user._id }).populate('expenses', 'amount description name createdAt');
+    const currentMonthExpenses = [];
+    budgets.forEach((budget) => {
+      let currentMonthExpense = budget.expenses.filter((expense) => {
+        console.log(expense.createdAt.getFullYear(), new Date().getMonth());
+        return expense.createdAt.getFullYear()=== new Date().getFullYear();
+      }).map((expense) => {
+        return {  title: expense.name, amount: expense.amount , month: expense.createdAt.getMonth() };
+      });
+      currentMonthExpenses.push(...currentMonthExpense);
+    });
+
+    return currentMonthExpenses;
+  } catch (error) {
+    console.log(error);
+    throw new Error(error.message);
+  }
+}
+async function getBudgetsBarChart(user){
+  try {
+    const budgets = await BudgetModel.find({ createdBy: user._id }).populate('expenses', 'amount description name createdAt');
+
+    const data = [];
+
+    budgets.forEach((budget) => {
+      let currentMonthExpense = budget.expenses.filter((expense) => {
+        return expense.createdAt.getMonth() === new Date().getMonth();
+      });
+      const totalExpenseAmount = currentMonthExpense.reduce((acc, expense) => acc + expense.amount, 0);
+      data.push({ title: budget.title, amount: totalExpenseAmount, budget: budget.amount });
+    });
+
+    return data;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+}
 module.exports = {
   createBudget,
   updateBudget,
   deleteBudget,
   getBudgets,
-  getBudgetById
+  getBudgetById,
+  getBudgetsPieChart,
+  getBudgetsBarChart,
 };

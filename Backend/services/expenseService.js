@@ -4,9 +4,10 @@ const { ObjectId } = require('mongoose').Types;
 // Create a new expense
 const createExpense = async (expenseData) => {
     try {
+        console.log(expenseData);
         const newExpense = new ExpenseModel({
             ...expenseData,
-            createdAt: new Date(),
+            createdAt: new Date(expenseData.date),
             modifiedAt: new Date(),
         });
         const savedExpense = await newExpense.save();
@@ -30,22 +31,36 @@ const getAllExpenses = async (userId) => {
     try {
         console.log(userId);
         let expenses = await ExpenseModel.find().populate('budget', 'createdBy title amount _id').sort('-createdAt');
-        console.log(expenses);
+        let budgets = await BudgetModel.find({createdBy:userId} ).populate('createdBy', 'name email _id');
         let usersExpense = expenses.filter((expense) => {
-            console.log(expense);
             return expense.budget.createdBy.toString() === userId.toString();
         });
-        return usersExpense;
+        return {expenses:usersExpense, budgets:budgets};
     } catch (error) {
         console.error(error);
         throw new Error('Failed to retrieve expenses');
     }
 };
+const getAllExpenseAsc = async (userId) => {
+    try {
+        let expenses = await ExpenseModel.find().populate('budget', 'createdBy title amount _id').sort('-createdAt');
+        console.log(expenses);
+        let budgets = await BudgetModel.find({createdBy:userId} ).populate('createdBy', 'name email _id');
+        let usersExpense = expenses.filter((expense) => {
+            return expense.budget.createdBy.toString() === userId.toString();
+        });
+        return {expenses:usersExpense, budgets:budgets};
+    } catch (error) {
+        console.error(error);
+        throw new Error('Failed to retrieve expenses');
+    }
+}
 
 const getExpenseById = async (expenseId, userId) => {
     try {
         const expense = await ExpenseModel.findOne({
             _id: expenseId,
+            'budget.createdBy': userId,
         }).populate('budget');
 
         if (!expense) {
@@ -95,30 +110,26 @@ const deleteExpenseById = async (expenseId) => {
         throw new Error('Failed to delete expense by ID');
     }
 };
-
-// TODO: Implement this function
 const getMonthlyExpenses = async (userId) => {
     try {
+        console.log("getAllExpenseAsc")
         // Aggregate to group expenses by month
-        const monthlyExpenses = await ExpenseModel.aggregate([
-            {
-                $match: {
-                    'budget.createdBy': userId,
-                },
-            },
-            {
-                $group: {
-                    _id: {
-                        year: { $year: '$createdAt' },
-                        month: { $month: '$createdAt' },
-                    },
-                    expenses: { $push: '$$ROOT' },
-                },
-            },
-        ]);
-
-        return monthlyExpenses;
+        const monthlyExpenses =(await getAllExpenseAsc(userId)).expenses.reduce((acc, expense) => {  
+            const monthYear = expense.createdAt.toLocaleString('en-US', { month: 'short', year: 'numeric' });
+            acc[monthYear] = (acc[monthYear] || 0) + expense.amount;
+            return acc;
+        }   
+        , {});
+        const monthlyExpenseArr = Object.entries(monthlyExpenses).map(([monthYear, amount]) => ({ monthYear, amount }));
+        console.log(monthlyExpenseArr);
+        monthlyExpenseArr.sort((a, b) => {
+            const aDate = new Date(a.monthYear);
+            const bDate = new Date(b.monthYear);
+            return aDate - bDate;
+        });
+        return  monthlyExpenseArr;
     } catch (error) {
+        console.error(error);
         throw new Error('Failed to retrieve monthly expenses');
     }
 };

@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const UserModel  = require('../models/user');
+const UserModel = require('../models/user');
 
 async function authenticateToken(req, res, next) {
 
@@ -16,13 +16,13 @@ async function authenticateToken(req, res, next) {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-console.log(decoded)
-    // if (isTokenExpired(decoded)) {
-    //   return res.status(401).json({ error: 'Token has expired' });
-    // }
+    console.log(decoded,"++++++++++");
+    if (isTokenExpired(decoded)) {
+      return res.status(401).json({ error: 'Token has expired' });
+    }
 
     const user = await UserModel.findById(decoded.userId);
-console.log(user);
+    console.log(user);
     if (!user) {
       return res.status(401).json({ error: 'Unauthorized' });
     }
@@ -31,7 +31,7 @@ console.log(user);
     req.userId = user._id;
     next();
   } catch (error) {
-    console.log(error)
+    console.log(error);
     if (error.name === 'TokenExpiredError') {
       return res.status(401).json({ error: 'Token has expired' });
     }

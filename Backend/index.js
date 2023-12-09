@@ -7,11 +7,13 @@ const { authenticateToken } = require('./middlewares/authMiddleware');
 const expenseRoutes = require('./routes/expenseRoute');
 const mongoose = require('./config/database'); // Import the configured mongoose instance
 const dotenv = require('dotenv');
+const cors = require('cors');
 const e = require('express');
 const app = express();
 const port = 3000;
 
 dotenv.config();
+app.use(cors())
 app.use(morgan('dev'));
 // Middleware to parse JSON data
 app.use(bodyParser.json());

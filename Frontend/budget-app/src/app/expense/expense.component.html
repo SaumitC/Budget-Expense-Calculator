@@ -1,0 +1,85 @@
+<app-navbar></app-navbar>
+<div class="container mt-5">
+  <h2>Expense</h2>
+
+  <!-- Add Budget Button -->
+  <button class="btn btn-success mb-3"  (click)="open(content,'Add')">
+    <i class="bi bi-plus"></i> Add Expense
+  </button>
+
+
+
+  <!-- Budget Table -->
+
+  <table class="table table-responsive">
+    <thead>
+      <tr>
+        <th scope="col-2">Name </th>
+        <th scope="col-4">description</th>
+        <th scope="col-4">amount</th>
+        <th scope="col-4">Date</th>
+        <th scope="col-4">Budget Type</th>
+        <th scope="col-1">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Sample Data -->
+      <tr *ngFor="let expense of expenses ">
+        <td>{{ expense.name }}</td>
+        <td>{{ expense.description }}</td>
+        <td>${{ expense.amount }}</td>
+        <td>{{ expense.createdAt |date :"short"}}</td>
+        <td>{{ expense.budget.title }}</td>
+        <td>
+          <!-- Edit Button -->
+          <button class="btn btn-warning btn-sm button" (click)="open(content,'Edit',expense)">
+            <i class="bi bi-pencil"></i> Edit
+          </button>
+
+          <!-- Delete Button -->
+          <button class="btn btn-danger btn-sm ml-2 button" (click)="deleteExpenseItem(expense)">
+            <i class="bi bi-trash"></i> Delete
+          </button>
+      </tr>
+    </tbody>
+  </table>
+</div>
+<ng-template #content let-modal>
+  <form (ngSubmit)="onSubmit()">
+      <div class="modal-header bg-info">
+        <h4 class="modal-title" id="modal-basic-title">{{actionType}} Expense </h4>
+        <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+      </div>
+      <div class="modal-body">
+
+          <div class="mb-3">
+            <label for="category">Name</label>
+            <input type="text" class="form-control" id="category" placeholder="Enter name " name="name" [(ngModel)]="newExpense.name"  required/>
+          </div>
+          <div class="mb-3">
+            <label for="category">Description</label>
+            <input type="text" class="form-control" id="category" placeholder="Enter description" name="description" [(ngModel)]="newExpense.description"  required/>
+          </div>
+          <div class="mb-3">
+            <label for="category">Budget Type</label>
+            <select required name="budget"  [(ngModel)]="newExpense.budgetId" class="form-control">
+              <option *ngFor="let item of budgets" [value]="item._id" >{{item.title}}</option>
+            </select>
+          </div>
+
+          <div class="mb-3">
+            <label for="amount">Amount</label>
+            <input type="number" class="form-control" id="amount" placeholder="Enter amount" name="amount" [(ngModel)]="newExpense.amount" required/>
+          </div>
+          <!-- date -->
+          <div class="mb-3">
+            <label for="date">Date</label>
+            <input type="date" class="form-control" id="date" placeholder="Enter date" name="date" [(ngModel)]="newExpense.date" required/>
+            </div>
+
+      </div>
+      <div class="modal-footer">
+        <button type="submit" class="btn btn-success ">Save</button>
+      </div>
+</form>
+</ng-template>
