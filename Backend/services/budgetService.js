@@ -86,14 +86,14 @@ async function getBudgetById(budgetId, user) {
 
 async function getBudgetsPieChart(user) {
   try {
-    const budgets = await BudgetModel.find({ createdBy: user._id }).populate('expenses', 'amount description name createdAt');
+    const budgets = await BudgetModel.find({ createdBy: user._id }).populate('expenses', 'amount description name date');
     const currentMonthExpenses = [];
     budgets.forEach((budget) => {
       let currentMonthExpense = budget.expenses.filter((expense) => {
-        console.log(expense.createdAt.getFullYear(), new Date().getMonth());
-        return expense.createdAt.getFullYear()=== new Date().getFullYear();
+        console.log(expense.date.getFullYear(), new Date().getMonth());
+        return expense.date.getFullYear()=== new Date().getFullYear();
       }).map((expense) => {
-        return {  title: expense.name, amount: expense.amount , month: expense.createdAt.getMonth() };
+        return {  title: expense.name, amount: expense.amount , month: expense.date.getMonth() };
       });
       currentMonthExpenses.push(...currentMonthExpense);
     });
@@ -106,13 +106,13 @@ async function getBudgetsPieChart(user) {
 }
 async function getBudgetsBarChart(user){
   try {
-    const budgets = await BudgetModel.find({ createdBy: user._id }).populate('expenses', 'amount description name createdAt');
+    const budgets = await BudgetModel.find({ createdBy: user._id }).populate('expenses', 'amount description name date');
 
     const data = [];
 
     budgets.forEach((budget) => {
       let currentMonthExpense = budget.expenses.filter((expense) => {
-        return expense.createdAt.getMonth() === new Date().getMonth();
+        return expense.date.getMonth() === new Date().getMonth();
       });
       const totalExpenseAmount = currentMonthExpense.reduce((acc, expense) => acc + expense.amount, 0);
       data.push({ title: budget.title, amount: totalExpenseAmount, budget: budget.amount });

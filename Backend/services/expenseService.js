@@ -4,10 +4,10 @@ const { ObjectId } = require('mongoose').Types;
 // Create a new expense
 const createExpense = async (expenseData) => {
     try {
-        console.log(expenseData);
         const newExpense = new ExpenseModel({
             ...expenseData,
-            createdAt: new Date(expenseData.date),
+            date: new Date(expenseData.date),
+            createdAt: new Date(),
             modifiedAt: new Date(),
         });
         const savedExpense = await newExpense.save();
@@ -30,7 +30,7 @@ const createExpense = async (expenseData) => {
 const getAllExpenses = async (userId) => {
     try {
         console.log(userId);
-        let expenses = await ExpenseModel.find().populate('budget', 'createdBy title amount _id').sort('-createdAt');
+        let expenses = await ExpenseModel.find().populate('budget', 'createdBy title amount _id date').sort('-date');
         let budgets = await BudgetModel.find({createdBy:userId} ).populate('createdBy', 'name email _id');
         let usersExpense = expenses.filter((expense) => {
             return expense.budget.createdBy.toString() === userId.toString();
@@ -43,7 +43,7 @@ const getAllExpenses = async (userId) => {
 };
 const getAllExpenseAsc = async (userId) => {
     try {
-        let expenses = await ExpenseModel.find().populate('budget', 'createdBy title amount _id').sort('-createdAt');
+        let expenses = await ExpenseModel.find().populate('budget', 'createdBy title amount _id date').sort('-date');
         console.log(expenses);
         let budgets = await BudgetModel.find({createdBy:userId} ).populate('createdBy', 'name email _id');
         let usersExpense = expenses.filter((expense) => {
@@ -77,10 +77,12 @@ const getExpenseById = async (expenseId, userId) => {
 // Update an expense by ID
 const updateExpenseById = async (expenseId, expenseData) => {
     try {
+        const { amount, description, name, budgetId , date} = expenseData;
         const updatedExpense = await ExpenseModel.findByIdAndUpdate(
             expenseId,
             {
-                ...expenseData,
+                amount, description, name, budgetId ,
+                date: new Date(date),
                 modifiedAt: new Date(),
             },
             { new: true }
@@ -92,6 +94,7 @@ const updateExpenseById = async (expenseId, expenseData) => {
 
         return updatedExpense;
     } catch (error) {
+        console.error(error);
         throw new Error('Failed to update expense by ID');
     }
 };
@@ -115,7 +118,7 @@ const getMonthlyExpenses = async (userId) => {
         console.log("getAllExpenseAsc")
         // Aggregate to group expenses by month
         const monthlyExpenses =(await getAllExpenseAsc(userId)).expenses.reduce((acc, expense) => {  
-            const monthYear = expense.createdAt.toLocaleString('en-US', { month: 'short', year: 'numeric' });
+            const monthYear = expense.date.toLocaleString('en-US', { month: 'short', year: 'numeric' });
             acc[monthYear] = (acc[monthYear] || 0) + expense.amount;
             return acc;
         }   

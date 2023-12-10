@@ -5,8 +5,10 @@
     <div class="col-md-12">
       <h1 class="text-center">Welcome to DashBoard</h1>
     </div>
-    <!--  -->
+    <!-- Current Month Expense   -->
+
     <div class="container mt-4">
+      <h3 class="text-center">Current Month Analysis</h3>
       <div class="alert alert-primary text-center" role="alert">
         <h3>Total Budget: ${{ totalBudget }}</h3>
       </div>
@@ -35,7 +37,7 @@
           [(ngModel)]="selectedMonth"
           (change)="onSelect($event.target)"
         >
-          <option selected value="All">Select Month</option>
+          <option selected value="All">Current Year</option>
           <option value="0">January</option>
           <option value="1">February</option>
           <option value="2">March</option>
@@ -49,11 +51,16 @@
           <option value="10">November</option>
           <option value="11">December</option>
         </select>
+        <br>
+        <div *ngIf="!selectedMonthData.length" class="alert alert-danger" role="alert">
+          No Data Found
+        </div>
         <canvas id="pieChart" #budgetsPieChart></canvas>
       </div>
       <!-- Budget vs expense chart monthly -->
       <div class="col-md-6">
-        <h3 class="text-center">Budget vs Expense</h3>
+        <h3 class="text-center">Budget vs Expense Current Month</h3>
+        <!-- if not selectedMonthData  -->
         <canvas id="budgetsBarChart" #budgetsBarChart></canvas>
       </div>
       <!-- Monthly expense chart -->
@@ -63,7 +70,7 @@
           <br>
           <br>
           <br>
-          <h3 class="text-center">Monthly Expense</h3>
+          <h3 class="text-center">All Expenses For Each Month</h3>
 
           <canvas id="lineChart" #monthlyExpenseLineChart></canvas>
         </div>

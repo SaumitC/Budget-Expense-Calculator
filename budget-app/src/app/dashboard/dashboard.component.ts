@@ -43,6 +43,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   pieChartType = 'pie';
   pieChartLegend = true;
   pieChartPlugins = [];
+  selectedMonthData: any = [];
   // line chart config
   lineChartOptions = {
     responsive: true,
@@ -180,6 +181,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.updateChart(selectedMonthData);
   }
   updateChart(data: any) {
+    this.selectedMonthData = data;
     const pieChartLabels = data.map((d: any) => d.title);
     const pieChartData = data.map((d: any) => d.amount);
     const datasets = [

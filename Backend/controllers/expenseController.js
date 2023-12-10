@@ -47,15 +47,11 @@ const getExpenseById = async (req, res) => {
 // Update an expense by ID
 const updateExpenseById = async (req, res) => {
     try {
-        const { amount, description, name } = req.body;
-
+      
+        console.log(req.body);
         const updatedExpense = await expenseService.updateExpenseById(
             req.params.id,
-            {
-                amount,
-                description,
-                name,
-            }
+            req.body
         );
 
         res.status(200).json({ message: 'Expense updated successfully', data: updatedExpense });

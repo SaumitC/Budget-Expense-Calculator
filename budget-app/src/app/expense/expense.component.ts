@@ -33,6 +33,7 @@ export class ExpenseComponent implements OnInit {
         console.log('Item added successfully:', response);
         swal.fire('Success!', response.message, 'success');
         this.modalRef.close();
+        this.resetNewExpense();
       },
       (error) => {
         // Handle addition error, display an error message, etc.
@@ -49,6 +50,7 @@ export class ExpenseComponent implements OnInit {
         this.getExpenseItems();
         this.modalRef.close();
         swal.fire('Success!', response.message, 'success');
+        this.resetNewExpense();
       },
       (error) => {
         // Handle update error, display an error message, etc.
@@ -97,9 +99,10 @@ export class ExpenseComponent implements OnInit {
       this.newExpense.amount = item.amount;
       this.newExpense.description = item.description;
       this.newExpense.name = item.name;
-      this.newExpense.budgetId = item._id;
-      this.newExpense.date = item.date;
+      this.newExpense.budgetId = item.budget._id;
+      this.newExpense.date = new Date(item.date).toISOString().substring(0, 10) ;
    }
+   console.log(this.newExpense);
      this.modalRef = this.modalService.open(content, {
       ariaLabelledBy: 'modal-basic-title',
     });
@@ -136,6 +139,10 @@ export class ExpenseComponent implements OnInit {
         alert('Please fill all the fields');
       }
       this.editExpenseItem(this.newExpense);
+
     }
+  }
+  resetNewExpense(){
+    this.newExpense = { budgetId: '', amount: null , description: '', name: '' ,date: ''};
   }
 }

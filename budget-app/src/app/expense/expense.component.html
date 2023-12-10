@@ -28,7 +28,7 @@
         <td>{{ expense.name }}</td>
         <td>{{ expense.description }}</td>
         <td>${{ expense.amount }}</td>
-        <td>{{ expense.createdAt |date :"short"}}</td>
+        <td>{{ expense.date |date :"short"}}</td>
         <td>{{ expense.budget.title }}</td>
         <td>
           <!-- Edit Button -->
@@ -74,7 +74,7 @@
           <!-- date -->
           <div class="mb-3">
             <label for="date">Date</label>
-            <input type="date" class="form-control" id="date" placeholder="Enter date" name="date" [(ngModel)]="newExpense.date" required/>
+            <input type="date" class="form-control" id="date" placeholder="Enter date" name="date" [(ngModel)]="newExpense.date" [value]="newExpense.date" required/>
             </div>
 
       </div>

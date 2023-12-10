@@ -18,6 +18,10 @@ const expenseSchema = new mongoose.Schema({
         ref: 'Budget',
         required: true,
     },
+    date: {
+        type: Date,
+        required: true,
+    },
     createdAt: {
         type: Date,
         required: true,
